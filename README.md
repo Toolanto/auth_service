@@ -1,7 +1,7 @@
 # Auth Service
 
 Is a simple service that allows to register and login a user.
-At the registration time a user can choose to enable the 2FA (property `two_factor_auth_enabled`). 
+At the registration time a user can choose to enable the 2FA (property `two_factor_auth_enabled`).
 
 If a user has the 2FA disabled the `/login` endpoint returns the following json:
 ```sh
@@ -12,16 +12,13 @@ If a user has the 2FA disabled the `/login` endpoint returns the following json:
 If the 2FA is enabled the response will be:
 ```sh
 {
-    "session_id":"session_id"
+    "otp_id":"otp-123"
 }
 ```
 and an OTP will be send (now it's logged).
-With the `session_id` and the `OTP` it's possible to get the JWT token calling the `/otp-token`.
+With the `OTP ID` and the `OTP VALUE` it's possible to get the JWT token calling the `/otp-token`.
 
-The endpoint documentation is under
-```
-http://localhost:8000/docs
-```
+
 
 ## Run applications (Docker)
 Build the image
@@ -32,16 +29,17 @@ run the container
 ```sh
 docker run -d --name auth-service -p 8000:8000 auth-service
 ```
-run the container with mounted volum
+run the container with mounted volume
 ```sh
-docker run -d --name auth-service -p 8000:8000 -v "$(pwd)/container:/code/data" auth-service 
+docker run -d --name auth-service -p 8000:8000 -v "$(pwd)/container:/code/data" auth-service
 ```
 watch the container log
 ```sh
 docker container logs --follow auth-service
 ```
 
-You should be able to get the documentation page
+## Endpoint documentation
+After start the image you should be able to get the Swagger documentation page.
 ```
 http://localhost:8000/docs
 ```
@@ -70,13 +68,25 @@ make test-unit
 ```
 make dev
 ```
+By default two files will be created under the data folder. If you want change some configuration you can update the `.env` file.
 
-By default two file will be created under the data
+## Implemantion notes
 
-## NOTE
+### Tests
+There are two types of tests: unit and integration.
+The intergation test are marked `integration`.
+Coverange: 89%.
 
-The user and otp informations are store in two files and they are loaded at starting time in memory.
-Different implementations could be used extend the two abstract classes `UserStore` and `OtpStore`.
+### API
+It's used Fastapi to expose the enpoint.
 
+### Peristence
+The persistence is implemented using a file and at starting time all values are loaded in memory.
+Since all persistence classes are only implementation from abstract class(`UserStore`, `OtpStore`) and in the usecases dependes only from the abstract class is easy to use a different implementation (Using a relational db or a NOSql db).
 
-By now the Otp email is only logged on the stdout.
+### OTP Email
+The email is a faker implementation that logs on a stdout.
+Ex.
+```
+INFO 2023-07-16 13:22:44,488  Sent email to: antonio@test.it - subject: OTP - body: Hi antonio, the OTP is 74919
+```

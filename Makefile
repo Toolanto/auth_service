@@ -1,6 +1,7 @@
 install:
 	@echo "Installing"
 	poetry install || poetry update
+	poetry run pre-commit install
 
 test-unit:
 	@echo "Test"

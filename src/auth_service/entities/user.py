@@ -1,9 +1,12 @@
-import base64
 from typing import Optional
+
 from pydantic import BaseModel
+
 from . import encode
 
+
 class User(BaseModel):
+    id: str
     email: str
     password: str
     name: str = None
@@ -12,5 +15,3 @@ class User(BaseModel):
 
     def is_valid_password(self, password: str) -> bool:
         return encode(password) == self.password
-    
-
