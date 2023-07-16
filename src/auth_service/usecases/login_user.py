@@ -34,15 +34,17 @@ class LoginUserUsecase(BaseModel):
     async def execute(self, req: LoginUserData) -> LoginUserRes:
         now = datetime.now(tz=timezone.utc)
 
-        user = await self.user_store.get(email=req.email)
+        user = await self.user_store.get_by_email(email=req.email)
         if not user.is_valid_password(req.password):
             raise LoginUserErrors.InvalidCredentials("Invalid credentials")
 
         if not user.two_factor_auth_enabled:
             return LoginUserRes(token=get_jwt_token(user=user, current_time=now))
 
-        otp = get_otp(user=user, current_time=now)
-        await self.otp_store.save(otp=otp)
+        otp = await self.otp_store.get_valid_otp(user.id, current_time=now)
+        if not otp:
+            otp = get_otp(user=user, current_time=now)
+            await self.otp_store.save(otp=otp)
 
         body = f"Hi {user.name}, the OTP is {otp.value}"
         await self.email_gateway.send(to_recipient=user.email, subject="OTP", body=body)

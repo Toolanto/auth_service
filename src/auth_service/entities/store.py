@@ -1,4 +1,6 @@
 import abc
+from datetime import datetime
+from typing import Optional
 
 from auth_service.entities.otp import Otp
 from auth_service.entities.user import User
@@ -18,7 +20,11 @@ class UserStore(abc.ABC):
         pass  # pragma: no cover
 
     @abc.abstractmethod
-    async def get(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> User:
+        pass  # pragma: no cover
+
+    @abc.abstractmethod
+    async def get_by_id(self, id: str) -> User:
         pass  # pragma: no cover
 
 
@@ -41,4 +47,8 @@ class OtpStore(abc.ABC):
 
     @abc.abstractmethod
     async def mark_checked(self, otp: Otp) -> None:
+        pass  # pragma: no cover
+
+    @abc.abstractmethod
+    async def get_valid_otp(self, user_id: str, current_time: datetime) -> Optional[Otp]:
         pass  # pragma: no cover

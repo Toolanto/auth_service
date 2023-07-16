@@ -1,8 +1,8 @@
+import jwt
 import pytest
 
 from auth_service.adapters.email_gateway import FakeEmailGateway
-from auth_service.adapters.otp_store import InMemoryOtpStore, InMemoryOtpStoreConf
-from auth_service.adapters.user_store import InMemoryUserStore, InMemoryUserStoreConf
+from auth_service.adapters.store import PostgresOtpStore, PostgresUserStore
 from auth_service.controller import Controller
 
 WHITE_LIST = ["test@test.it"]
@@ -10,29 +10,13 @@ FROM_ADDRESS = "from@test.it"
 
 
 @pytest.fixture
-def user_file(tmp_path):
-    user_file = tmp_path / "users.jsonl"
-    user_file.touch(exist_ok=True)
-    return user_file
+def user_store(db_config):
+    return PostgresUserStore(config=db_config)
 
 
 @pytest.fixture
-def user_store(user_file):
-    conf = InMemoryUserStoreConf(user_file=user_file)
-    return InMemoryUserStore(config=conf)
-
-
-@pytest.fixture
-def otp_file(tmp_path):
-    otp_file = tmp_path / "users.jsonl"
-    otp_file.touch(exist_ok=True)
-    return otp_file
-
-
-@pytest.fixture
-def otp_store(otp_file):
-    conf = InMemoryOtpStoreConf(otp_file=otp_file)
-    return InMemoryOtpStore(config=conf)
+def otp_store(db_config):
+    return PostgresOtpStore(config=db_config)
 
 
 @pytest.fixture
@@ -43,3 +27,8 @@ def email_gateway():
 @pytest.fixture
 def controller(user_store, otp_store, email_gateway):
     return Controller(user_store=user_store, otp_store=otp_store, email_gateway=email_gateway)
+
+
+@pytest.fixture
+def jwt_patch(mocker):
+    return mocker.patch("auth_service.usecases.jwt", return_value=mocker.Mock(spec=jwt))

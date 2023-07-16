@@ -22,7 +22,7 @@ class CreateUserData(BaseModel):
 
     @field_validator("email")
     def email_validation(cls, v):
-        regex = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
+        regex = re.compile(r"([A-Za-z0-9]+[+.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
         if not re.fullmatch(regex, v):
             raise ValueError("Invalid email")
         return v
