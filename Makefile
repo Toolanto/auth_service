@@ -14,3 +14,7 @@ test:
 dev:
 	@echo "Dev"
 	poetry run uvicorn main:web --reload
+
+access-container:
+	@echo "Auth postgres container"
+	docker exec -it auth-postgres /bin/bash

@@ -1,16 +1,10 @@
 import uuid
 
-import jwt
 import pytest
 
 from auth_service.entities import encode
 from auth_service.usecases.login_user import LoginUserData, LoginUserRes
 from tests import factories as fty
-
-
-@pytest.fixture
-def jwt_patch(mocker):
-    return mocker.patch("auth_service.usecases.jwt", return_value=mocker.Mock(spec=jwt))
 
 
 @pytest.fixture
@@ -44,3 +38,18 @@ async def test_login_user_returns_otp_id(controller, user_store, uuid_patch):
     res = await controller.login_user(req=LoginUserData(email=user.email, password=password))
     # then
     assert res == LoginUserRes(otp_id="uuid")
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_return_old_otp_id(controller, user_store, otp_store):
+    # given
+    password = "password123"
+    user = fty.UserFactory(password=encode(password), two_factor_auth_enabled=True)
+    await user_store.save(user=user)
+    otp = fty.OtpFactory(user_id=user.id)
+    await otp_store.save(otp=otp)
+    # when
+    res = await controller.login_user(req=LoginUserData(email=user.email, password=password))
+    # then
+    assert res == LoginUserRes(otp_id=otp.id)

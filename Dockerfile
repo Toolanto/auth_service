@@ -7,7 +7,6 @@ COPY ./pyproject.toml ./pyproject.toml
 COPY ./.env ./.env
 COPY src/ ./src
 COPY README.md README.md
-RUN mkdir data
 
 #
 RUN pip install poetry==1.2.2

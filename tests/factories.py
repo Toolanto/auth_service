@@ -26,7 +26,7 @@ class OtpFactory(factory.Factory):
     value = factory.Sequence(lambda n: f"1234{n}")
     created = factory.LazyFunction(lambda: datetime.now(tz=timezone.utc))
     expired = factory.LazyFunction(lambda: datetime.now(tz=timezone.utc) + timedelta(minutes=5))
-    user_email = factory.Faker("email")
+    user_id = factory.Sequence(lambda n: f"user-id-{n}")
 
     class Meta:
         model = Otp
@@ -53,7 +53,7 @@ class LoginUserDataFactory(factory.Factory):
 
 class OtpLoginDataFactory(factory.Factory):
     otp_id = factory.Sequence(lambda n: f"otp-id-{n}")
-    otp = factory.Sequence(lambda n: f"1234{n}")
+    otp_value = factory.Sequence(lambda n: f"1234{n}")
 
     class Meta:
         model = OtpLoginData

@@ -19,13 +19,14 @@ async def test_login_user_return_jwt(uc, user_store, otp_store, email_gateway, j
         password=encode(req.password),
         two_factor_auth_enabled=False,
     )
-    user_store.get.return_value = user
+    user_store.get_by_email.return_value = user
     jwt_patch.encode.return_value = "token"
     # when
     res = await uc.execute(req=req)
     # then
     assert res == LoginUserRes(token="token")
-    user_store.get.assert_called_once_with(email=user.email)
+    user_store.get_by_email.assert_called_once_with(email=user.email)
+    otp_store.get_valid_otp.assert_not_called()
     otp_store.save.assert_not_called()
     email_gateway.send.assert_not_called()
 
@@ -41,13 +42,15 @@ async def test_login_user_return_otp_id(
         password=encode(req.password),
         two_factor_auth_enabled=True,
     )
-    user_store.get.return_value = user
+    user_store.get_by_email.return_value = user
+    otp_store.get_valid_otp.return_value = None
     uuid_patch.uuid4.return_value = "uuid"
     # when
     res = await uc.execute(req=req)
     # then
     assert res == LoginUserRes(otp_id="uuid")
-    user_store.get.assert_called_once_with(email=user.email)
+    user_store.get_by_email.assert_called_once_with(email=user.email)
+    otp_store.get_valid_otp.assert_called_once()
     jwt_patch.encode.assert_not_called()
     otp_store.save.assert_called_once()
     email_gateway.send.assert_called_once()

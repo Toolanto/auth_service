@@ -7,17 +7,12 @@ from pydantic_settings import BaseSettings
 load_dotenv()
 
 
-class UserStore(BaseSettings):
-    user_file: str = Field(env="USER_FILE")
-
-
-class OtpStore(BaseSettings):
-    otp_file: str = Field(env="OTP_FILE")
+class DbConfig(BaseSettings):
+    db_url: str = Field(env="DB_URL")
 
 
 class Settings(BaseModel):
-    user_store: UserStore = UserStore()
-    otp_store: OtpStore = OtpStore()
+    db_config: DbConfig() = DbConfig()
 
 
 def load():

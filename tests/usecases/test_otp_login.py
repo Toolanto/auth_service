@@ -26,20 +26,20 @@ def uc(user_store, otp_store):
 async def test_otp_login_return_jwt(uc, user_store, otp_store, jwt_patch):
     # given
     req = fty.OtpLoginDataFactory()
-    otp = fty.OtpFactory(id=req.otp_id, value=req.otp)
+    otp = fty.OtpFactory(id=req.otp_id, value=req.otp_value)
     user = fty.UserFactory(
-        email=otp.user_email,
+        id=otp.user_id,
         two_factor_auth_enabled=True,
     )
     otp_store.get.return_value = otp
-    user_store.get.return_value = user
+    user_store.get_by_id.return_value = user
     jwt_patch.encode.return_value = "token"
     # when
     res = await uc.execute(req=req)
     # then
     assert res == "token"
     otp_store.get.assert_called_once_with(id=req.otp_id)
-    user_store.get.assert_called_once_with(email=otp.user_email)
+    user_store.get_by_id.assert_called_once_with(id=otp.user_id)
     otp_store.mark_checked.assert_called_once_with(otp=otp)
 
 
@@ -53,7 +53,7 @@ async def test_otp_not_found(uc, user_store, otp_store):
         await uc.execute(req=req)
     # then
     otp_store.get.assert_called_once_with(id=req.otp_id)
-    user_store.get.assert_not_called()
+    user_store.get_by_id.assert_not_called()
     otp_store.mark_checked.assert_not_called()
 
 
@@ -92,5 +92,5 @@ async def test_otp_login_with_invalid_otp(
         await uc.execute(req=req)
     # then
     otp_store.get.assert_called_once_with(id=req.otp_id)
-    user_store.get.assert_not_called()
+    user_store.get_by_id.assert_not_called()
     otp_store.mark_checked.assert_not_called()

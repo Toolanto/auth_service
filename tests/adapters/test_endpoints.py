@@ -138,7 +138,7 @@ class TestOptLogin:
         # given
         token = "token"
         controller.otp_login.return_value = token
-        data = {"otp_id": "otp-123", "otp": "12345"}
+        data = {"otp_id": "otp-123", "otp_value": "12345"}
         # when
         res = client.post("/otp-login", json=data)
         # then
@@ -156,7 +156,7 @@ class TestOptLogin:
     def test_errors(self, client, controller, exception, code):
         # given
         controller.otp_login.side_effect = exception
-        data = {"otp_id": "otp-123", "otp": "12345"}
+        data = {"otp_id": "otp-123", "otp_value": "12345"}
         # when
         res = client.post("/otp-login", json=data)
         # then

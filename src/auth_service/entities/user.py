@@ -13,5 +13,8 @@ class User(BaseModel):
     last_name: Optional[str] = None
     two_factor_auth_enabled: Optional[bool] = False
 
+    class Config:
+        from_attributes = True
+
     def is_valid_password(self, password: str) -> bool:
         return encode(password) == self.password

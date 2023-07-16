@@ -17,7 +17,7 @@ OTP_MINUTES_LIFE = 5
 def get_jwt_token(user: User, current_time: datetime) -> str:
     payload = {
         "email": user.email,
-        "expired": current_time + timedelta(minutes=JWT_TIME_LIFE_MINUTES),
+        "expired": (current_time + timedelta(minutes=JWT_TIME_LIFE_MINUTES)).isoformat(),
     }
     return jwt.encode(payload, SECRET, algorithm="HS256")
 
@@ -29,5 +29,5 @@ def get_otp(user: User, current_time: datetime) -> Otp:
         value=value,
         created=current_time,
         expired=current_time + timedelta(minutes=OTP_MINUTES_LIFE),
-        user_email=user.email,
+        user_id=user.id,
     )
