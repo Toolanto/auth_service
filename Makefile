@@ -13,7 +13,7 @@ test:
 
 dev:
 	@echo "Dev"
-	poetry run uvicorn main:web --reload
+	poetry run uvicorn main:app --reload
 
 access-container:
 	@echo "Auth postgres container"

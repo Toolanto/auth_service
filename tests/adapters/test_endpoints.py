@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from auth_service.adapters.http.endpoints import Responses, create_app
+from auth_service.adapters.http.routers.schemas import Authentication, UserRes
 from auth_service.controller import Controller
+from auth_service.dependencies.controller import get_controller
 from auth_service.repositories import UserStoreErrors
 from auth_service.usecases.create_user import CreateUserData
 from auth_service.usecases.login_user import (
@@ -11,6 +12,7 @@ from auth_service.usecases.login_user import (
     LoginUserRes,
 )
 from auth_service.usecases.otp_login import OtpLoginData, OtpLoginErrors
+from main import app
 
 
 @pytest.fixture()
@@ -20,7 +22,7 @@ def controller(mocker):
 
 @pytest.fixture()
 def client(controller):
-    app = create_app(controller=controller)
+    app.dependency_overrides[get_controller] = lambda: controller
     return TestClient(app)
 
 
@@ -30,9 +32,7 @@ class TestRegister:
         [
             pytest.param(
                 {"email": "email@test.test", "name": "test", "password": "pwd12300"},
-                Responses.UserRes(
-                    email="email@test.test", name="test", two_factor_auth_enabled=False
-                ),
+                UserRes(email="email@test.test", name="test", two_factor_auth_enabled=False),
             ),
             pytest.param(
                 {
@@ -43,7 +43,7 @@ class TestRegister:
                     "last_name": "testino",
                     "two_factor_auth_enabled": True,
                 },
-                Responses.UserRes(
+                UserRes(
                     email="email@test.test",
                     name="test",
                     last_name="testino",
@@ -100,8 +100,8 @@ class TestLogin:
     @pytest.mark.parametrize(
         "controller_res,endpoint_res",
         [
-            pytest.param(LoginUserRes(token="token"), Responses.Authentication(token="token")),
-            pytest.param(LoginUserRes(otp_id="otp-id"), Responses.Authentication(otp_id="otp-id")),
+            pytest.param(LoginUserRes(token="token"), Authentication(token="token")),
+            pytest.param(LoginUserRes(otp_id="otp-id"), Authentication(otp_id="otp-id")),
         ],
     )
     def test_login_user(self, client, controller, controller_res, endpoint_res):
@@ -143,7 +143,7 @@ class TestOptLogin:
         res = client.post("/otp-login", json=data)
         # then
         assert res.status_code == 200
-        assert res.json() == Responses.Authentication(token=token).model_dump()
+        assert res.json() == Authentication(token=token).model_dump()
         controller.otp_login.assert_called_once_with(req=OtpLoginData(**data))
 
     @pytest.mark.parametrize(

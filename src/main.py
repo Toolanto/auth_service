@@ -1,24 +1,19 @@
 import logging
 
-from auth_service.adapters.email.email_gateway import FakeEmailGateway
-from auth_service.adapters.http import endpoints as ep
-from auth_service.adapters.repositories.repos import (
-    DbConfig,
-    PostgresOtpStore,
-    PostgresUserStore,
-)
-from auth_service.config import load
-from auth_service.controller import Controller
+import uvicorn
+from fastapi import FastAPI
+
+from auth_service.adapters.http.routers import login, users
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s %(asctime)s  %(message)s",
-    handlers=[logging.StreamHandler()],
+    # handlers=[logging.StreamHandler()],
 )
-configs = load()
-controller = Controller(
-    user_store=PostgresUserStore(config=DbConfig(**configs.db_config.model_dump())),
-    otp_store=PostgresOtpStore(config=DbConfig(**configs.db_config.model_dump())),
-    email_gateway=FakeEmailGateway(),
-)
-web = ep.create_app(controller=controller)
+
+app = FastAPI(title="Auth Service")
+app.include_router(users.router)
+app.include_router(login.router)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)

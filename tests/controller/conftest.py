@@ -10,13 +10,13 @@ FROM_ADDRESS = "from@test.it"
 
 
 @pytest.fixture
-def user_store(db_config):
-    return PostgresUserStore(config=db_config)
+def user_store(session):
+    return PostgresUserStore(session=session)
 
 
 @pytest.fixture
-def otp_store(db_config):
-    return PostgresOtpStore(config=db_config)
+def otp_store(session):
+    return PostgresOtpStore(session=session)
 
 
 @pytest.fixture

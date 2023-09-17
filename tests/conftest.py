@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from auth_service.adapters.repositories.repos import DbConfig, OtpModel, UserModel
+from auth_service.adapters.repositories.repos import OtpModel, UserModel
 from auth_service.config import load
 
 
@@ -14,22 +14,21 @@ def configs():
     return configs
 
 
-@pytest.fixture
-def db_config(configs):
-    return DbConfig(**configs.db_config.model_dump())
-
-
-@pytest_asyncio.fixture(autouse=True)
-async def clean_db(configs):
+@pytest_asyncio.fixture()
+async def session(configs):
     db_engine = "postgresql+asyncpg"
     engine = create_async_engine(
         f"{db_engine}://{configs.db_config.db_url}", future=True, echo=True
     )
-    session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+    async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+    async with async_session() as session:
+        yield session
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def clean_db(session):
     yield
     # clean user, otp
-    async with session() as sess:
-        async with sess.begin():
-            for model in [OtpModel, UserModel]:
-                del_stm = delete(model)
-                await sess.execute(del_stm)
+    for model in [OtpModel, UserModel]:
+        del_stm = delete(model)
+        await session.execute(del_stm)
