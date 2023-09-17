@@ -9,13 +9,13 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from auth_service.adapters.repositories.models import OtpModel, UserModel
 from auth_service.entities.otp import Otp
-from auth_service.entities.store import (
+from auth_service.entities.user import User
+from auth_service.repositories import (
     OtpStore,
     OtpStoreErrors,
     UserStore,
     UserStoreErrors,
 )
-from auth_service.entities.user import User
 
 
 @dataclass

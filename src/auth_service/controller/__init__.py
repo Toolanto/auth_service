@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from auth_service.entities.gateway import EmailGateway
-from auth_service.entities.store import OtpStore, UserStore
 from auth_service.entities.user import User
+from auth_service.gateway import EmailGateway
+from auth_service.repositories import OtpStore, UserStore
 from auth_service.usecases.create_user import CreateUserData, CreateUserUsecase
 from auth_service.usecases.login_user import (
     LoginUserData,

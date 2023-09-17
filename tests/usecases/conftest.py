@@ -3,8 +3,8 @@ import uuid
 import jwt
 import pytest
 
-from auth_service.entities.gateway import EmailGateway
-from auth_service.entities.store import OtpStore, UserStore
+from auth_service.gateway import EmailGateway
+from auth_service.repositories import OtpStore, UserStore
 
 
 @pytest.fixture

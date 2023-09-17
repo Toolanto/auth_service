@@ -2,7 +2,7 @@ import logging
 
 from pydantic.dataclasses import dataclass
 
-from auth_service.entities.gateway import EmailGateway
+from auth_service.gateway import EmailGateway
 
 
 @dataclass

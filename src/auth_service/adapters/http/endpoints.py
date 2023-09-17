@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from auth_service.controller import Controller
-from auth_service.entities.store import UserStoreErrors
+from auth_service.repositories import UserStoreErrors
 from auth_service.usecases.create_user import CreateUserData
 from auth_service.usecases.login_user import LoginUserData, LoginUserErrors
 from auth_service.usecases.otp_login import OtpLoginData, OtpLoginErrors

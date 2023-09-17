@@ -1,9 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from auth_service.adapters.endpoints import Responses, create_app
+from auth_service.adapters.http.endpoints import Responses, create_app
 from auth_service.controller import Controller
-from auth_service.entities.store import UserStoreErrors
+from auth_service.repositories import UserStoreErrors
 from auth_service.usecases.create_user import CreateUserData
 from auth_service.usecases.login_user import (
     LoginUserData,

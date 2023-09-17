@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field, constr
 
-from auth_service.entities.store import OtpStore, OtpStoreErrors, UserStore
+from auth_service.repositories import OtpStore, OtpStoreErrors, UserStore
 from auth_service.usecases import get_jwt_token
 
 

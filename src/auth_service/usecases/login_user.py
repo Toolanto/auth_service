@@ -3,8 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, constr
 
-from auth_service.entities.gateway import EmailGateway
-from auth_service.entities.store import OtpStore, UserStore
+from auth_service.gateway import EmailGateway
+from auth_service.repositories import OtpStore, UserStore
 from auth_service.usecases import get_jwt_token, get_otp
 
 

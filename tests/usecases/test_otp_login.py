@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from auth_service.entities.store import OtpStoreErrors
+from auth_service.repositories import OtpStoreErrors
 from auth_service.usecases.otp_login import OtpLoginErrors, OtpLoginUsecase
 from tests import factories as fty
 

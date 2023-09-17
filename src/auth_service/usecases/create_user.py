@@ -5,8 +5,8 @@ from typing import Optional
 from pydantic import BaseModel, Field, constr, field_validator
 
 from auth_service.entities import encode
-from auth_service.entities.store import UserStore
 from auth_service.entities.user import User
+from auth_service.repositories import UserStore
 
 
 class CreateUserData(BaseModel):
