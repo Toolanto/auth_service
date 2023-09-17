@@ -3,10 +3,11 @@ from typing import Optional
 
 import sqlalchemy
 from pydantic.dataclasses import dataclass
-from sqlalchemy import Boolean, Column, DateTime, String, select, update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
+from auth_service.adapters.repositories.models import OtpModel, UserModel
 from auth_service.entities.otp import Otp
 from auth_service.entities.store import (
     OtpStore,
@@ -15,30 +16,6 @@ from auth_service.entities.store import (
     UserStoreErrors,
 )
 from auth_service.entities.user import User
-
-Base = declarative_base()
-
-
-class UserModel(Base):
-    __tablename__ = "user"
-
-    id = Column(String, primary_key=True)
-    email = Column(String, unique=True)
-    password = Column(String, nullable=False)
-    name = Column(String, nullable=False)
-    last_name = Column(String, nullable=True)
-    two_factor_auth_enabled = Column(Boolean, nullable=False)
-
-
-class OtpModel(Base):
-    __tablename__ = "otp"
-
-    id = Column(String, primary_key=True)
-    user_id = Column(String, nullable=False)
-    value = Column(String, nullable=False)
-    created = Column(DateTime(timezone=True), nullable=False)
-    expired = Column(DateTime(timezone=True), nullable=False)
-    checked = Column(Boolean, nullable=False, default=False)
 
 
 @dataclass

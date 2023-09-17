@@ -2,7 +2,7 @@ import jwt
 import pytest
 
 from auth_service.adapters.email_gateway import FakeEmailGateway
-from auth_service.adapters.store import PostgresOtpStore, PostgresUserStore
+from auth_service.adapters.repositories.repos import PostgresOtpStore, PostgresUserStore
 from auth_service.controller import Controller
 
 WHITE_LIST = ["test@test.it"]

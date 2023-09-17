@@ -2,7 +2,11 @@ import logging
 
 from auth_service.adapters import endpoints as ep
 from auth_service.adapters.email_gateway import FakeEmailGateway
-from auth_service.adapters.store import DbConfig, PostgresOtpStore, PostgresUserStore
+from auth_service.adapters.repositories.repos import (
+    DbConfig,
+    PostgresOtpStore,
+    PostgresUserStore,
+)
 from auth_service.config import load
 from auth_service.controller import Controller
 

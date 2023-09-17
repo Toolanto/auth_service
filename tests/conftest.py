@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from auth_service.adapters.store import DbConfig, OtpModel, UserModel
+from auth_service.adapters.repositories.repos import DbConfig, OtpModel, UserModel
 from auth_service.config import load
 
 
